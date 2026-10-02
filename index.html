@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEXUSCORE / Company Management System Ver.2 UI Prototype</title>
+<style>
+:root{
+  --bg:#eef2f2;
+  --panel:#ffffff;
+  --panel-2:#f7f9f9;
+  --text:#101719;
+  --muted:#728087;
+  --line:#dfe6e8;
+  --dark:#0b171d;
+  --dark-2:#10232c;
+  --lime:#c8ff35;
+  --lime-2:#9de700;
+  --green:#16a34a;
+  --red:#ef4444;
+  --orange:#f59e0b;
+  --blue:#3b82f6;
+  --purple:#8b5cf6;
+  --shadow:0 10px 30px rgba(10,30,40,.08);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.small{font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:#eff4f4;color:#425058;border:1px solid var(--line)}
+.badge.active{background:#f1ffd2;color:#385800;border-color:#c8ff35}
+.badge.admin{background:#111f27;color:#d8ff63;border-color:#254452}
+.badge.red{background:#fff0f0;color:#b91c1c;border-color:#fecaca}
+.badge.green{background:#effcf3;color:#15803d;border-color:#bbf7d0}
+.badge.yellow{background:#fff9df;color:#a16207;border-color:#fde68a}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:linear-gradient(135deg,#eef3f4 0%,#f9fbfb 58%,#edf4f2 100%)}
+.login-brand{padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-brand:before,.login-brand:after{content:"";position:absolute;border:1px solid rgba(150,170,175,.18);transform:rotate(28deg)}
+.login-brand:before{width:640px;height:240px;left:-230px;top:120px}.login-brand:after{width:520px;height:180px;right:-260px;bottom:160px}
+.brand{display:flex;align-items:center;gap:14px;font-weight:900;letter-spacing:.18em;font-size:27px;position:relative;z-index:1}.brand b{color:var(--lime-2)}
+.brand-sub{margin-top:10px;font-size:12px;letter-spacing:.2em;color:#6d7d84}
+.login-copy{position:relative;z-index:1;max-width:560px}.login-copy h1{font-size:56px;line-height:1.02;margin:0 0 20px;letter-spacing:-.04em}.login-copy h1 span{color:var(--lime-2)}.login-copy p{font-size:16px;color:#607078;line-height:1.8}
+.login-meta{display:flex;gap:18px;flex-wrap:wrap;position:relative;z-index:1}.login-meta span{font-size:11px;letter-spacing:.12em;color:#74848a}
+.login-panel-wrap{background:var(--dark);padding:34px;display:flex;align-items:center;justify-content:center}
+.login-panel{width:min(470px,100%);background:#fff;border-radius:20px;padding:34px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.login-panel .eyebrow{font-size:11px;letter-spacing:.18em;color:#728087;font-weight:800}.login-panel h2{font-size:30px;margin:8px 0 4px}.login-panel p{margin:0 0 28px;color:#718087}
+.field{margin:16px 0}.field label{display:block;font-size:11px;letter-spacing:.08em;font-weight:800;color:#44525a;margin-bottom:8px}.input,.select,.textarea{width:100%;border:1px solid #cfd9dc;background:#fff;border-radius:10px;padding:13px 14px;outline:none;transition:.15s}.input:focus,.select:focus,.textarea:focus{border-color:var(--lime-2);box-shadow:0 0 0 3px rgba(200,255,53,.23)}
+.pin-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.pin{height:52px;text-align:center;font-size:22px;font-weight:900}
+.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn.primary{background:var(--lime);color:#122000}.btn.primary:hover{background:#b7f300}.btn.dark{background:var(--dark);color:white}.btn.ghost{background:white;border:1px solid var(--line);color:#1c2a30}.btn.danger{background:#fff1f1;color:#b91c1c;border:1px solid #fecaca}.btn.smallbtn{padding:8px 10px;font-size:12px}.btn.block{width:100%}.login-status{display:flex;justify-content:space-between;gap:16px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);font-size:11px;font-weight:800}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+.demo-box{margin-top:18px;padding:12px 14px;border:1px dashed #c8d4d8;border-radius:10px;background:#f8fbfb;font-size:12px;color:#617078}
+
+/* APP SHELL */
+#appShell{min-height:100vh;display:grid;grid-template-columns:250px 1fr;background:var(--bg)}
+.sidebar{background:linear-gradient(180deg,var(--dark),#0b151b);color:#e8f1f2;min-height:100vh;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid #143440;z-index:30}
+.side-head{padding:22px 20px 18px;border-bottom:1px solid #17343e}.side-head .brand{font-size:18px;letter-spacing:.11em}.side-head .brand b{color:var(--lime)}.side-head .brand-sub{font-size:9px;color:#78909a;margin-top:6px}
+.nav{padding:12px 10px;overflow:auto;flex:1}.nav button{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:#b8c6cb;border:0;border-radius:10px;padding:10px 12px;margin:2px 0;font-weight:800;font-size:12px}.nav button:hover{background:#10252f;color:#fff}.nav button.active{background:var(--lime);color:#142200}.nav-icon{width:24px;height:24px;border-radius:7px;border:1px solid currentColor;display:grid;place-items:center;font-size:10px;font-weight:900;flex:0 0 24px}.nav-meta{display:flex;flex-direction:column;line-height:1.25}.nav-meta small{font-size:9px;opacity:.7;font-weight:700;margin-top:2px}
+.side-user{padding:14px;border-top:1px solid #17343e}.userbox{border:1px solid #1f404b;border-radius:12px;padding:12px;background:#0c1d24}.userbox strong{display:block;font-size:12px}.userbox small{display:block;color:#78909a;font-size:10px;margin:4px 0 10px}.user-actions{display:flex;gap:8px}.user-actions button{flex:1;border-radius:8px;padding:8px;border:1px solid #264753;background:#102630;color:#cfe0e4;font-size:10px;font-weight:800}
+.main{min-width:0}
+.topbar{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:20}.top-left{display:flex;align-items:center;gap:14px}.menu-btn{display:none;width:40px;height:40px;border:1px solid var(--line);background:#fff;border-radius:10px}.crumb strong{font-size:15px}.crumb small{display:block;color:#7b888d;font-size:10px;margin-top:2px}.top-right{display:flex;align-items:center;gap:10px}.online{display:flex;align-items:center;gap:8px;font-size:11px;color:#4b5c62;font-weight:800}.date-chip{border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:11px;color:#607078;background:#f9fbfb}
+.content{padding:24px;max-width:1580px;margin:0 auto}.page{display:none}.page.active{display:block}.page-title{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.page-title h1{margin:0;font-size:26px;letter-spacing:-.03em}.page-title p{margin:5px 0 0;color:#728087;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.grid{display:grid;gap:14px}.grid.kpi4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid.two{grid-template-columns:1.2fr .8fr}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.sidebar2{grid-template-columns:1.4fr .6fr}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}.card.flat{box-shadow:none}.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.card-title h3{margin:0;font-size:13px;letter-spacing:.01em}.card-title small{color:var(--muted)}
+.kpi{min-height:128px;position:relative;overflow:hidden}.kpi .label{font-size:11px;color:#69777e;font-weight:900;letter-spacing:.04em}.kpi .value{font-size:27px;font-weight:950;margin-top:14px;letter-spacing:-.04em}.kpi .trend{margin-top:10px;font-size:11px;font-weight:800}.kpi .spark{height:26px;margin-top:8px;border-bottom:2px solid #9fea00;position:relative;opacity:.7}.kpi .spark:before{content:"";position:absolute;left:0;right:0;bottom:6px;border-top:1px dashed #d9e9e1;transform:rotate(-3deg)}
+.metric-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#fbfdfd}.metric b{display:block;font-size:18px;margin-top:5px}.metric span{font-size:10px;color:var(--muted);font-weight:800}
+.alloc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.alloc .item{padding:12px;border:1px solid var(--line);border-radius:10px;background:#fafcfc}.alloc .bar{height:5px;background:#e9eeee;border-radius:999px;overflow:hidden;margin-top:10px}.alloc .bar i{display:block;height:100%;background:var(--lime-2)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.table{width:100%;border-collapse:collapse;min-width:760px;background:#fff}.table th,.table td{padding:11px 12px;border-bottom:1px solid #edf1f2;text-align:left;font-size:11px;vertical-align:middle}.table th{background:#f8fafb;color:#627077;font-size:10px;letter-spacing:.04em;position:sticky;top:0}.table tr:last-child td{border-bottom:0}.table td.amount{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}.table input[type="number"]{width:90px;padding:8px;border:1px solid #cfd9dc;border-radius:8px}.table select{padding:7px;border:1px solid #cfd9dc;border-radius:8px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px}.section-head h2{font-size:14px;margin:0}.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.chip{border:1px solid var(--line);background:#fff;color:#5f6d73;border-radius:9px;padding:8px 10px;font-size:10px;font-weight:900}.chip.active{background:var(--lime);border-color:var(--lime);color:#162100}.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}.seg button{border:0;background:#fff;padding:9px 13px;font-size:10px;font-weight:900;color:#627078}.seg button.active{background:var(--lime);color:#172300}
+.summary-bar{position:sticky;bottom:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 -8px 24px rgba(10,30,40,.08);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;z-index:9}.summary-bar strong{font-size:18px}.summary-bar .stats{display:flex;gap:22px;align-items:center;flex-wrap:wrap}.summary-bar .stats span{font-size:10px;color:#718087}.summary-bar .stats b{display:block;color:#142026;font-size:15px;margin-top:3px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.form-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdfd}.form-card h4{margin:0 0 12px;font-size:12px}.price-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.price{border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 10px;font-weight:900;font-size:12px}.price.active{background:#efffc0;border-color:#b7ed29;box-shadow:inset 0 0 0 1px #c8ff35}.qty-control{display:grid;grid-template-columns:44px 1fr 44px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.qty-control button{border:0;background:#f5f8f8;font-size:20px}.qty-control input{border:0;text-align:center;font-weight:950;font-size:18px;min-width:0;padding:10px}.hero-number{font-size:34px;font-weight:950;letter-spacing:-.045em}.hero-number.lime{color:#5c8500}.hero-number.red{color:#c81e1e}.calc-box{background:linear-gradient(90deg,#f8ffd9,#fff);border:1px solid #dcf6a8;border-radius:12px;padding:16px}.calc-box .formula{font-size:13px;color:#66757b}.calc-box .result{font-size:28px;font-weight:950;margin-top:6px}
+.employee-pill{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;margin:7px 0}.employee-pill .who{display:flex;align-items:center;gap:10px}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#e9f0f1;font-size:10px;font-weight:900;color:#39505a}.employee-pill .who b{font-size:11px}.employee-pill .who small{display:block;color:#758289;font-size:9px;margin-top:2px}.pill-pay{font-size:11px;font-weight:900}
+.timeline{position:relative;padding-left:18px}.timeline:before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:#cbd8dc}.timeline-item{position:relative;padding:0 0 14px 12px}.timeline-item:before{content:"";position:absolute;left:-17px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--lime-2);box-shadow:0 0 0 3px #efffc0}.timeline-item b{font-size:11px}.timeline-item small{display:block;color:#7a878d;font-size:9px;margin-top:3px}
+.split-card{display:grid;grid-template-columns:240px 1fr;gap:14px}.profile-box{background:#f8fafb;border:1px solid var(--line);border-radius:12px;padding:14px}.profile-box h3{margin:8px 0 4px}.profile-meta{display:grid;gap:8px;margin-top:14px}.profile-meta .row{display:flex;justify-content:space-between;border-bottom:1px dashed #d9e1e3;padding-bottom:7px;font-size:10px}.profile-meta .row:last-child{border:0}.role-history{padding-left:18px;border-left:1px solid #d4dee1}.role-history div{margin:9px 0;font-size:10px}.role-history b{margin-right:8px}
+.money-positive{color:#15803d;font-weight:900}.money-negative{color:#dc2626;font-weight:900}.money-warning{color:#a16207;font-weight:900}
+.log-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px;margin-bottom:10px}.log-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.log-top b{font-size:12px}.log-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.log-grid div{background:#f8fafb;border:1px solid #edf1f2;border-radius:8px;padding:9px}.log-grid span{display:block;font-size:9px;color:#7a888e;margin-bottom:4px}.log-grid strong{font-size:11px}.log-actions{display:flex;gap:7px;margin-top:10px;justify-content:flex-end}
+.setting-block{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px;margin-bottom:12px}.setting-block h3{margin:0 0 12px;font-size:13px}.permission-grid{display:grid;grid-template-columns:1.5fr repeat(2,.6fr);gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}.permission-grid div{padding:9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:10px}.permission-grid div:nth-child(3n){border-right:0}.permission-grid .head{background:#f5f8f8;font-weight:900}.check{font-weight:950;color:#4f7a00}.no{color:#aab4b8}
+.toast{position:fixed;right:24px;bottom:24px;background:#0d1b22;color:#fff;border:1px solid #1d3a45;border-radius:12px;padding:12px 15px;box-shadow:0 18px 40px rgba(0,0,0,.25);font-size:11px;z-index:100;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:translateY(0);opacity:1}.toast b{color:var(--lime)}
+.mobile-bottom{display:none}
+
+@media(max-width:1100px){
+  #appShell{grid-template-columns:210px 1fr}.grid.kpi4{grid-template-columns:repeat(2,1fr)}.grid.two,.grid.sidebar2{grid-template-columns:1fr}.grid.three{grid-template-columns:1fr 1fr}.alloc{grid-template-columns:1fr 1fr}.metric-row{grid-template-columns:repeat(3,1fr)}.split-card{grid-template-columns:1fr}.log-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  #loginScreen{grid-template-columns:1fr}.login-brand{display:none}.login-panel-wrap{min-height:100vh;padding:18px}.login-panel{padding:24px;border-radius:16px}
+  #appShell{display:block}.sidebar{position:fixed;left:-265px;top:0;width:250px;transition:.2s;box-shadow:20px 0 50px rgba(0,0,0,.25)}.sidebar.open{left:0}.topbar{height:58px;padding:0 12px}.menu-btn{display:block}.date-chip{display:none}.content{padding:14px 12px 88px}.page-title{align-items:stretch;flex-direction:column}.page-title h1{font-size:22px}.actions{justify-content:flex-start}.grid.kpi4,.grid.three{grid-template-columns:1fr}.metric-row{grid-template-columns:1fr 1fr}.alloc{grid-template-columns:1fr}.form-grid,.form-grid.three{grid-template-columns:1fr}.price-options{grid-template-columns:1fr 1fr 1fr}.hero-number{font-size:28px}.summary-bar{bottom:72px;align-items:stretch;flex-direction:column}.summary-bar .btn{width:100%}.log-grid{grid-template-columns:1fr}.permission-grid{grid-template-columns:1.6fr .7fr .7fr}.mobile-bottom{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;background:#0d1b22;border-top:1px solid #1c3944;z-index:25;padding:7px 6px calc(7px + env(safe-area-inset-bottom))}.mobile-bottom button{background:transparent;border:0;color:#9db1b8;font-size:9px;font-weight:900;padding:6px}.mobile-bottom button.active{color:#d8ff63}
+}
+</style>
+</head>
+<body>
+
+<section id="loginScreen">
+  <div class="login-brand">
+    <div>
+      <div class="brand">NEXUS<b>CORE</b></div>
+      <div class="brand-sub">COMPANY MANAGEMENT SYSTEM / UI PROTOTYPE V2</div>
+    </div>
+    <div class="login-copy">
+      <h1>Manage.<br><span>Produce.</span><br>Distribute.<br>Grow.</h1>
+      <p>ゲーム内会社運営を想定した管理UIプロトタイプ。給与・従業員・会社資産・業務履歴をひとつの画面体系に統合しています。</p>
+    </div>
+    <div class="login-meta"><span>SECURE</span><span>EFFICIENT</span><span>RESPONSIVE</span><span>NO ILLUSTRATION UI</span></div>
+  </div>
+  <div class="login-panel-wrap">
+    <div class="login-panel">
+      <div class="eyebrow">01 / LOGIN</div>
+      <h2>SECURE ACCESS</h2>
+      <p>名前と4桁PINを入力してください。</p>
+      <div class="field">
+        <label>NAME / 名前</label>
+        <input id="loginName" class="input" value="NIWA SHOTA" placeholder="従業員名" />
+      </div>
+      <div class="field">
+        <label>ACCESS PIN / 4桁PIN</label>
+        <div class="pin-row">
+          <input class="input pin" maxlength="1" inputmode="numeric" value="1" />
+          <input class="input pin" maxlength="1" inputmode="numeric" value="2" />
+          <input class="input pin" maxlength="1" inputmode="numeric" value="3" />
+          <input class="input pin" maxlength="1" inputmode="numeric" value="4" />
+        </div>
+      </div>
+      <button id="loginBtn" class="btn primary block">LOGIN →</button>
+      <div class="demo-box"><b>UI PROTOTYPE</b><br>デモPINは <b>1234</b>。バックエンド未接続のため、本番用認証ではありません。</div>
+      <div class="login-status"><span><i class="dot"></i> SYSTEM STATUS</span><span style="color:#5e8d00">ONLINE</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="appShell" class="hidden">
+  <aside id="sidebar" class="sidebar">
+    <div class="side-head">
+      <div class="brand">NEXUS<b>CORE</b></div>
+      <div class="brand-sub">COMPANY MANAGEMENT SYSTEM / V2</div>
+    </div>
+    <nav id="nav" class="nav"></nav>
+    <div class="side-user">
+      <div class="userbox">
+        <strong id="sideUserName">NIWA SHOTA</strong>
+        <small>CEO / ADMIN ACCESS</small>
+        <div class="user-actions"><button id="logoutBtn">LOGOUT</button><button id="prototypeBtn">PROTOTYPE</button></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button id="menuBtn" class="menu-btn">☰</button>
+        <div class="crumb"><strong id="crumbTitle">DASHBOARD</strong><small id="crumbSub">会社概要 / 管理コンソール</small></div>
+      </div>
+      <div class="top-right"><span class="date-chip">2026 / 10 / 02</span><span class="online"><i class="dot"></i> ONLINE</span></div>
+    </header>
+
+    <div class="content">
+      <!-- 02 DASHBOARD -->
+      <section class="page active" data-page="dashboard">
+        <div class="page-title"><div><h1>DASHBOARD</h1><p>COMPANY OVERVIEW / MANAGEMENT CONSOLE</p></div><div class="actions"><div class="seg period-seg"><button class="active">TODAY</button><button>7 DAYS</button><button>30 DAYS</button><button>ALL</button></div></div></div>
+        <div class="grid kpi4">
+          <div class="card kpi"><div class="label">TOTAL ASSETS / 総資産</div><div class="value mono">¥420,000,000</div><div class="trend money-positive">+ 14.3%</div><div class="spark"></div></div>
+          <div class="card kpi"><div class="label">CASH RESERVE / 現金</div><div class="value mono">¥180,000,000</div><div class="trend money-positive">+ 5.1%</div><div class="spark"></div></div>
+          <div class="card kpi"><div class="label">ECSTASY RESERVE / 会社保有</div><div class="value mono">600 <span style="font-size:13px">UNITS</span></div><div class="trend money-positive">¥240,000,000</div><div class="spark"></div></div>
+          <div class="card kpi"><div class="label">UNPAID PAYROLL / 未払い給与</div><div class="value mono">¥75,000,000</div><div class="trend money-negative">14 RECORDS</div><div class="spark" style="border-color:#ff6b6b"></div></div>
+        </div>
+        <div class="grid two" style="margin-top:14px">
+          <div class="card">
+            <div class="card-title"><h3>REVENUE ALLOCATION / 収益配分</h3><small>固定ルール</small></div>
+            <div class="alloc">
+              <div class="item"><b>FARMING</b><div class="small">素材</div><div class="hero-number" style="font-size:22px;margin-top:9px">40%</div><div class="bar"><i style="width:40%"></i></div></div>
+              <div class="item"><b>PRODUCTION</b><div class="small">製造</div><div class="hero-number" style="font-size:22px;margin-top:9px">15%</div><div class="bar"><i style="width:15%"></i></div></div>
+              <div class="item"><b>SALES</b><div class="small">販売</div><div class="hero-number" style="font-size:22px;margin-top:9px">25%</div><div class="bar"><i style="width:25%"></i></div></div>
+              <div class="item"><b>CASH</b><div class="small">会社現金</div><div class="hero-number" style="font-size:22px;margin-top:9px">10%</div><div class="bar"><i style="width:10%"></i></div></div>
+              <div class="item"><b>ECSTASY</b><div class="small">会社在庫</div><div class="hero-number" style="font-size:22px;margin-top:9px">10%</div><div class="bar"><i style="width:10%"></i></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><h3>ECSTASY MARKET / 現在相場</h3><span class="badge admin">ADMIN</span></div>
+            <div class="price-options market-options"><button class="price">¥300,000</button><button class="price active">¥400,000</button><button class="price">¥500,000</button></div>
+            <div style="margin-top:18px"><div class="small">CURRENT MARKET VALUE</div><div class="hero-number mono" id="dashMarketValue">¥400,000 / pcs</div></div>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:14px">
+          <div class="card"><div class="card-title"><h3>OPERATION STATUS / 稼働状況</h3></div><div class="metric-row"><div class="metric"><span>FARMING</span><b>18</b><div class="small">TIMES</div></div><div class="metric"><span>PRODUCTION</span><b>7</b><div class="small">TIMES</div></div><div class="metric"><span>SALES</span><b>5</b><div class="small">TIMES</div></div><div class="metric"><span>ACTIVE</span><b>18</b><div class="small">EMPLOYEES</div></div><div class="metric"><span>RETIRED</span><b>4</b><div class="small">EMPLOYEES</div></div></div></div>
+          <div class="card"><div class="card-title"><h3>RECENT ACTIVITY / 最近の履歴</h3><button class="btn ghost smallbtn" data-goto="activity">VIEW ALL</button></div><div class="timeline"><div class="timeline-item"><b>SALES #0052 registered</b><small>19:42 / ECSTASY 1,000 units</small></div><div class="timeline-item"><b>PRODUCTION #0051 completed</b><small>19:31 / 5 participants</small></div><div class="timeline-item"><b>FARMING delivery registered</b><small>18:55 / HYDROGEN 70</small></div><div class="timeline-item"><b>PAYROLL processed</b><small>18:32 / ¥15,000,000</small></div></div></div>
+        </div>
+      </section>
+
+      <!-- 03 FARMING -->
+      <section class="page" data-page="farming">
+        <div class="page-title"><div><h1>FARMING</h1><p>MATERIAL DELIVERY / INDIVIDUAL QUANTITY</p></div><div class="actions"><span class="badge admin">ADMIN ONLY REGISTER</span></div></div>
+        <div class="grid sidebar2">
+          <div class="card">
+            <div class="form-grid three"><div class="field"><label>DELIVERY DATE</label><input class="input" type="date" value="2026-10-02"></div><div class="field"><label>PARTICIPANT</label><select class="select"><option>田中 太郎 / STAFF</option><option>佐藤 次郎 / DIRECTOR</option><option>鈴木 一郎 / GENERAL MANAGER</option></select></div><div class="field"><label>ACTION</label><button id="addFarmingEmployee" class="btn ghost block" style="margin-top:0">+ 従業員を追加</button></div></div>
+            <div class="section-head"><h2>PARTICIPANT 01 / 田中 太郎</h2><span class="badge active">ACTIVE</span></div>
+            <div class="table-wrap"><table class="table" id="farmingTable"><thead><tr><th>MATERIAL</th><th>UNIT PRICE</th><th>QTY</th><th>PAY</th></tr></thead><tbody></tbody></table></div>
+            <div class="section-head"><h2>PARTICIPANT 02 / 佐藤 次郎</h2><button class="btn danger smallbtn">REMOVE</button></div>
+            <div class="table-wrap"><table class="table" id="farmingTable2"><thead><tr><th>MATERIAL</th><th>UNIT PRICE</th><th>QTY</th><th>PAY</th></tr></thead><tbody></tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><h3>DELIVERY SUMMARY</h3></div>
+            <div class="profile-meta"><div class="row"><span>Participants</span><b>2 PEOPLE</b></div><div class="row"><span>Total Units</span><b id="farmUnits">130</b></div><div class="row"><span>Total Payroll</span><b id="farmPayroll">¥3,300,000</b></div></div>
+            <div class="calc-box" style="margin-top:16px"><div class="formula">登録後の給与ステータス</div><div class="result">UNPAID</div></div>
+            <button id="registerFarm" class="btn primary block" style="margin-top:16px">REGISTER FARMING RECORD →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 PRODUCTION -->
+      <section class="page" data-page="production">
+        <div class="page-title"><div><h1>PRODUCTION</h1><p>ECSTASY MANUFACTURING / 15% PAYROLL</p></div><div class="actions"><span class="badge admin">ADMIN ONLY REGISTER</span></div></div>
+        <div class="grid sidebar2">
+          <div class="card">
+            <div class="form-card"><h4>01 / UNIT VALUE</h4><div class="price-options" id="prodPrice"><button class="price">¥300,000</button><button class="price">¥400,000</button><button class="price active">¥500,000</button></div></div>
+            <div class="form-card" style="margin-top:12px"><h4>02 / PRODUCTION QUANTITY</h4><div class="qty-control"><button data-qty="prod" data-dir="-1">−</button><input id="prodQty" type="number" value="1000" step="500" min="500" max="10000"><button data-qty="prod" data-dir="1">＋</button></div><div class="small" style="margin-top:7px">500個単位 / MAX 10,000</div></div>
+            <div class="calc-box" style="margin-top:12px"><div class="formula">REVENUE EQUIVALENT</div><div class="result mono" id="prodRevenue">¥500,000,000</div></div>
+            <div class="calc-box" style="margin-top:12px"><div class="formula">PRODUCTION PAYROLL / 15%</div><div class="result mono" id="prodPayroll">¥75,000,000</div></div>
+            <div class="section-head"><h2>PARTICIPANTS</h2><button class="btn ghost smallbtn">+ 従業員を選択</button></div>
+            <div id="prodParticipants"></div>
+          </div>
+          <div class="card"><div class="card-title"><h3>SUMMARY</h3></div><div class="profile-meta"><div class="row"><span>Production Quantity</span><b id="prodSummaryQty">1,000</b></div><div class="row"><span>Revenue Equivalent</span><b id="prodSummaryRevenue">¥500,000,000</b></div><div class="row"><span>Production Payroll</span><b id="prodSummaryPayroll">¥75,000,000</b></div><div class="row"><span>Participants</span><b>5</b></div><div class="row"><span>Pay / Person</span><b id="prodPer">¥15,000,000</b></div></div><button id="registerProduction" class="btn primary block" style="margin-top:16px">REGISTER PRODUCTION RECORD →</button></div>
+        </div>
+      </section>
+
+      <!-- 05 SALES -->
+      <section class="page" data-page="sales">
+        <div class="page-title"><div><h1>SALES</h1><p>ECSTASY SALES / REVENUE DISTRIBUTION</p></div><div class="actions"><span class="badge admin">ADMIN ONLY REGISTER</span></div></div>
+        <div class="grid sidebar2">
+          <div class="card">
+            <div class="form-card"><h4>01 / SALE PRICE</h4><div class="price-options" id="salesPrice"><button class="price">¥300,000</button><button class="price">¥400,000</button><button class="price active">¥500,000</button></div></div>
+            <div class="form-card" style="margin-top:12px"><h4>02 / SALE QUANTITY</h4><div class="qty-control"><button data-qty="sales" data-dir="-1">−</button><input id="salesQty" type="number" value="1000" step="500" min="500" max="10000"><button data-qty="sales" data-dir="1">＋</button></div></div>
+            <div class="calc-box" style="margin-top:12px"><div class="formula">GROSS SALES</div><div class="result mono" id="grossSales">¥500,000,000</div></div>
+            <div class="section-head"><h2>REVENUE ALLOCATION</h2></div>
+            <div class="table-wrap"><table class="table" id="salesAlloc"><thead><tr><th>TYPE</th><th>RATE</th><th>VALUE</th></tr></thead><tbody></tbody></table></div>
+            <div class="section-head"><h2>PARTICIPANTS</h2><button class="btn ghost smallbtn">+ 従業員を選択</button></div>
+            <div id="salesParticipants"></div>
+          </div>
+          <div class="card"><div class="card-title"><h3>COMPANY ASSET UPDATE</h3></div><div class="profile-meta"><div class="row"><span>SALES PAYROLL / 25%</span><b id="salesPayroll">¥125,000,000</b></div><div class="row"><span>Pay / Person</span><b id="salesPer">¥25,000,000</b></div><div class="row"><span>Company CASH / 10%</span><b id="salesCash">+ ¥50,000,000</b></div><div class="row"><span>ECSTASY RESERVE / 10%</span><b id="salesReserve">+ 100 units</b></div></div><button id="registerSales" class="btn primary block" style="margin-top:16px">REGISTER SALES RECORD →</button></div>
+        </div>
+      </section>
+
+      <!-- 06 PAYROLL -->
+      <section class="page" data-page="payroll">
+        <div class="page-title"><div><h1>PAYROLL</h1><p>SALARY / PAYMENT MANAGEMENT</p></div><div class="actions"><div class="seg"><button class="active">UNPAID</button><button>PAID</button><button>HISTORY</button></div></div></div>
+        <div class="grid kpi4"><div class="card kpi"><div class="label">TOTAL UNPAID</div><div class="value mono">¥75,000,000</div></div><div class="card kpi"><div class="label">PAID THIS MONTH</div><div class="value mono">¥180,000,000</div></div><div class="card kpi"><div class="label">UNPAID EMPLOYEES</div><div class="value mono">8</div></div><div class="card kpi"><div class="label">UNPAID RECORDS</div><div class="value mono">14</div></div></div>
+        <div class="card" style="margin-top:14px"><div class="filter-row"><input class="input" style="max-width:290px" placeholder="従業員名・業務種類で検索..."><select class="select" style="max-width:220px"><option>ALL WORK TYPES</option><option>FARMING</option><option>PRODUCTION</option><option>SALES</option></select><div class="seg"><button class="active">TODAY</button><button>7 DAYS</button><button>30 DAYS</button><button>ALL</button></div></div><div class="table-wrap"><table class="table"><thead><tr><th><input type="checkbox" id="payAll"></th><th>EMPLOYEE</th><th>WORK TYPE</th><th>DATE</th><th>AMOUNT</th><th>STATUS</th></tr></thead><tbody id="payrollRows"></tbody></table></div></div>
+        <div class="summary-bar"><div class="stats"><span>SELECTED<b id="paySelectedCount">0 RECORDS</b></span><span>TOTAL AMOUNT<b id="paySelectedTotal">¥0</b></span></div><button id="processPayment" class="btn primary">PROCESS PAYMENT →</button></div>
+      </section>
+
+      <!-- 07 EMPLOYEES -->
+      <section class="page" data-page="employees">
+        <div class="page-title"><div><h1>EMPLOYEES</h1><p>EMPLOYEE / ACCESS MANAGEMENT</p></div><div class="actions"><button id="addEmployeeBtn" class="btn primary">+ ADD EMPLOYEE</button></div></div>
+        <div class="grid kpi4"><div class="card kpi"><div class="label">ACTIVE EMPLOYEES</div><div class="value">18</div></div><div class="card kpi"><div class="label">RETIRED</div><div class="value">4</div></div><div class="card kpi"><div class="label">ADMIN STAFF</div><div class="value">3</div></div><div class="card kpi"><div class="label">TOTAL EMPLOYEES</div><div class="value">22</div></div></div>
+        <div class="grid sidebar2" style="margin-top:14px"><div class="card"><div class="filter-row"><input class="input" style="max-width:260px" placeholder="名前を検索..."><select class="select" style="max-width:180px"><option>ACTIVE</option><option>RETIRED</option><option>ALL</option></select><select class="select" style="max-width:180px"><option>ALL ROLES</option><option>CEO</option><option>COO</option><option>GENERAL MANAGER</option><option>DIRECTOR</option><option>STAFF</option><option>LOOKIE</option></select></div><div class="table-wrap"><table class="table"><thead><tr><th>NAME</th><th>ROLE</th><th>DEPARTMENT</th><th>HIRE DATE</th><th>STATUS</th></tr></thead><tbody id="employeeRows"></tbody></table></div></div><div class="card"><div class="profile-box"><span class="badge active">ACTIVE</span><h3>田中 太郎</h3><div class="small">STAFF / FARMING・SALES</div><div class="profile-meta"><div class="row"><span>Hire Date</span><b>2026/04/01</b></div><div class="row"><span>Last Active</span><b>2026/10/02 19:32</b></div><div class="row"><span>PIN</span><b>••••</b></div><div class="row"><span>Total Salary</span><b>¥82,500,000</b></div><div class="row"><span>Unpaid</span><b class="money-negative">¥25,500,000</b></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"><button class="btn ghost smallbtn">PIN RESET</button><button class="btn ghost smallbtn">EDIT</button><button class="btn danger smallbtn" style="grid-column:1 / -1">RETIRE EMPLOYEE</button></div></div><div class="section-head"><h2>ROLE HISTORY</h2></div><div class="role-history"><div><b>2026/04/01</b> LOOKIE → STAFF</div><div><b>2026/08/15</b> STAFF → DIRECTOR</div><div><b>2026/09/12</b> DIRECTOR → STAFF</div></div></div></div>
+      </section>
+
+      <!-- 08 PERFORMANCE -->
+      <section class="page" data-page="performance">
+        <div class="page-title"><div><h1>PERFORMANCE</h1><p>EMPLOYEE PERFORMANCE / ANALYTICS</p></div><div class="actions"><div class="seg"><button>TODAY</button><button>7 DAYS</button><button class="active">30 DAYS</button><button>ALL</button></div></div></div>
+        <div class="card"><div class="filter-row"><select class="select" style="max-width:300px"><option>田中 太郎 / STAFF</option><option>佐藤 次郎 / DIRECTOR</option><option>鈴木 一郎 / GENERAL MANAGER</option></select><select class="select" style="max-width:220px"><option>SORT: TOTAL ACTIVITY</option><option>FARMING VALUE</option><option>PRODUCTION QTY</option><option>SALES AMOUNT</option></select></div><div class="metric-row"><div class="metric"><span>TOTAL ACTIVITY</span><b>30</b><div class="small">TIMES</div></div><div class="metric"><span>LAST ACTIVE</span><b style="font-size:14px">2026/10/02</b><div class="small">19:32</div></div><div class="metric"><span>FARMING</span><b>18</b><div class="small">TIMES</div></div><div class="metric"><span>PRODUCTION</span><b>7</b><div class="small">TIMES</div></div><div class="metric"><span>SALES</span><b>5</b><div class="small">TIMES</div></div></div></div>
+        <div class="grid three" style="margin-top:14px"><div class="card"><div class="card-title"><h3>FARMING PERFORMANCE</h3></div><div class="hero-number">840 <span style="font-size:12px">UNITS</span></div><div class="small">18 deliveries / ¥18,200,000</div><div class="table-wrap" style="margin-top:12px"><table class="table" style="min-width:0"><tbody><tr><td>GREEN GELATO</td><td class="amount">120</td></tr><tr><td>CODEIN</td><td class="amount">80</td></tr><tr><td>LIQUID SULFUR</td><td class="amount">150</td></tr><tr><td>AMMONIUM NITRATE</td><td class="amount">90</td></tr><tr><td>SODIUM HYDROXIDE</td><td class="amount">100</td></tr><tr><td>HYDROGEN</td><td class="amount">300</td></tr></tbody></table></div></div><div class="card"><div class="card-title"><h3>PRODUCTION PERFORMANCE</h3></div><div class="hero-number">4,500 <span style="font-size:12px">PCS</span></div><div class="small">7 participations</div><div class="calc-box" style="margin-top:14px"><div class="formula">REVENUE-EQUIVALENT VALUE</div><div class="result">¥2,050,000,000</div></div></div><div class="card"><div class="card-title"><h3>SALES PERFORMANCE</h3></div><div class="hero-number">3,000 <span style="font-size:12px">PCS</span></div><div class="small">5 participations</div><div class="calc-box" style="margin-top:14px"><div class="formula">ACTUAL SALES AMOUNT</div><div class="result">¥1,350,000,000</div></div></div></div>
+        <div class="card" style="margin-top:14px"><div class="card-title"><h3>SALARY PERFORMANCE / 本人・管理者のみ</h3></div><div class="metric-row"><div class="metric"><span>FARMING PAYROLL</span><b>¥18.2M</b></div><div class="metric"><span>PRODUCTION</span><b>¥32.5M</b></div><div class="metric"><span>SALES</span><b>¥31.8M</b></div><div class="metric"><span>PAID</span><b>¥57.0M</b></div><div class="metric"><span>UNPAID</span><b class="money-negative">¥25.5M</b></div></div></div>
+      </section>
+
+      <!-- 09 INVENTORY -->
+      <section class="page" data-page="inventory">
+        <div class="page-title"><div><h1>INVENTORY</h1><p>COMPANY ECSTASY / ASSET MANAGEMENT</p></div><div class="actions"><span class="badge admin">ADMIN SALE</span></div></div>
+        <div class="grid kpi4"><div class="card kpi"><div class="label">ECSTASY RESERVE</div><div class="value" id="invUnits">600 UNITS</div></div><div class="card kpi"><div class="label">CURRENT VALUE</div><div class="value" id="invCurrent">¥240,000,000</div></div><div class="card kpi"><div class="label">ACQUISITION VALUE</div><div class="value">¥210,000,000</div></div><div class="card kpi"><div class="label">UNREALIZED P/L</div><div class="value money-positive" id="invPL">+ ¥30,000,000</div></div></div>
+        <div class="grid two" style="margin-top:14px"><div class="card"><div class="card-title"><h3>MARKET PRICE</h3></div><div class="price-options market-options"><button class="price">¥300,000</button><button class="price active">¥400,000</button><button class="price">¥500,000</button></div><div class="section-head"><h2>ASSET SUMMARY</h2></div><div class="metric-row" style="grid-template-columns:repeat(3,1fr)"><div class="metric"><span>CASH</span><b>¥180M</b></div><div class="metric"><span>ECSTASY VALUE</span><b id="invValueShort">¥240M</b></div><div class="metric"><span>TOTAL ASSETS</span><b id="totalAssetShort">¥420M</b></div></div></div><div class="card"><div class="card-title"><h3>SELL COMPANY INVENTORY</h3></div><div class="field"><label>SELL QUANTITY</label><div class="qty-control"><button data-qty="inventory" data-dir="-1">−</button><input id="invSellQty" type="number" value="100" step="50" min="50" max="600"><button data-qty="inventory" data-dir="1">＋</button></div></div><div class="field"><label>SALE PRICE</label><div class="price-options" id="invSalePrice"><button class="price">¥300,000</button><button class="price active">¥400,000</button><button class="price">¥500,000</button></div></div><div class="calc-box"><div class="formula">ESTIMATED PROCEEDS</div><div class="result" id="invProceeds">¥40,000,000</div></div><button id="sellInventory" class="btn primary block" style="margin-top:14px">SELL INVENTORY →</button></div></div>
+        <div class="grid two" style="margin-top:14px"><div class="card"><div class="card-title"><h3>ACQUISITION HISTORY</h3></div><div class="table-wrap"><table class="table"><thead><tr><th>DATE</th><th>UNITS</th><th>UNIT PRICE</th><th>VALUE</th></tr></thead><tbody><tr><td>10/02</td><td>100</td><td>¥500,000</td><td class="amount">¥50,000,000</td></tr><tr><td>10/01</td><td>75</td><td>¥400,000</td><td class="amount">¥30,000,000</td></tr><tr><td>09/28</td><td>150</td><td>¥300,000</td><td class="amount">¥45,000,000</td></tr></tbody></table></div></div><div class="card"><div class="card-title"><h3>SALE HISTORY</h3></div><div class="table-wrap"><table class="table"><thead><tr><th>DATE</th><th>UNITS</th><th>PRICE</th><th>PROCEEDS</th></tr></thead><tbody><tr><td>09/29</td><td>150</td><td>¥400,000</td><td class="amount">¥60,000,000</td></tr><tr><td>09/28</td><td>200</td><td>¥380,000</td><td class="amount">¥76,000,000</td></tr></tbody></table></div></div></div>
+      </section>
+
+      <!-- 10 COMPANY CASH -->
+      <section class="page" data-page="cash">
+        <div class="page-title"><div><h1>COMPANY CASH</h1><p>CASH FLOW / EXPENSE MANAGEMENT</p></div><div class="actions"><span class="badge admin">ADMIN ONLY</span></div></div>
+        <div class="grid kpi4"><div class="card kpi"><div class="label">CURRENT CASH</div><div class="value">¥220,000,000</div></div><div class="card kpi"><div class="label">THIS MONTH INFLOW</div><div class="value money-positive">+¥95,000,000</div></div><div class="card kpi"><div class="label">THIS MONTH OUTFLOW</div><div class="value money-negative">-¥25,000,000</div></div><div class="card kpi"><div class="label">NET CHANGE</div><div class="value money-positive">+¥70,000,000</div></div></div>
+        <div class="grid sidebar2" style="margin-top:14px"><div class="card"><div class="card-title"><h3>REGISTER TRANSACTION</h3></div><div class="form-grid"><div class="field"><label>TYPE</label><div class="seg" id="cashType"><button class="active">INCOME</button><button>EXPENSE</button></div></div><div class="field"><label>AMOUNT</label><input class="input" type="number" value="5000000"></div><div class="field"><label>CATEGORY</label><select class="select"><option>EQUIPMENT</option><option>EVENT</option><option>BONUS</option><option>OPERATING COST</option><option>OTHER</option></select></div><div class="field"><label>DATE</label><input class="input" type="date" value="2026-10-02"></div></div><div class="field"><label>MEMO</label><textarea class="textarea" rows="3" placeholder="取引内容を入力..."></textarea></div><button id="registerCash" class="btn primary">REGISTER TRANSACTION →</button></div><div class="card"><div class="card-title"><h3>QUICK RULES</h3></div><div class="profile-meta"><div class="row"><span>Normal Sales</span><b>+10% CASH</b></div><div class="row"><span>Inventory Sale</span><b>+100% PROCEEDS</b></div><div class="row"><span>Negative Balance</span><b class="money-negative">BLOCKED</b></div><div class="row"><span>Manual Change</span><b>AUDIT LOG</b></div></div></div></div>
+        <div class="card" style="margin-top:14px"><div class="card-title"><h3>CASH FLOW HISTORY</h3></div><div class="table-wrap"><table class="table"><thead><tr><th>DATE</th><th>DESCRIPTION</th><th>AMOUNT</th><th>BALANCE</th><th>ADMIN</th></tr></thead><tbody><tr><td>10/02 19:45</td><td>Inventory Sale</td><td class="amount money-positive">+¥40,000,000</td><td class="amount">¥220,000,000</td><td>NIWA / CEO</td></tr><tr><td>10/02 19:20</td><td>Equipment</td><td class="amount money-negative">-¥10,000,000</td><td class="amount">¥180,000,000</td><td>NIWA / CEO</td></tr><tr><td>10/02 18:55</td><td>ECSTASY Sales / Cash 10%</td><td class="amount money-positive">+¥50,000,000</td><td class="amount">¥190,000,000</td><td>SYSTEM</td></tr><tr><td>10/02 17:40</td><td>Bonus / 田中 太郎</td><td class="amount money-negative">-¥5,000,000</td><td class="amount">¥140,000,000</td><td>NIWA / CEO</td></tr></tbody></table></div></div>
+      </section>
+
+      <!-- 11 ACTIVITY LOG -->
+      <section class="page" data-page="activity">
+        <div class="page-title"><div><h1>ACTIVITY LOG</h1><p>WORK RECORDS / CORRECTION</p></div><div class="actions"><div class="seg"><button class="active">ALL</button><button>VALID</button><button>VOID</button></div></div></div>
+        <div class="card"><div class="filter-row"><select class="select" style="max-width:180px"><option>ALL TYPES</option><option>FARMING</option><option>PRODUCTION</option><option>SALES</option></select><select class="select" style="max-width:220px"><option>ALL EMPLOYEES</option><option>田中 太郎</option><option>佐藤 次郎</option></select><input class="input" style="max-width:280px" placeholder="ID・名前などを検索..."></div></div>
+        <div style="margin-top:14px" id="activityLogs"></div>
+      </section>
+
+      <!-- 12 AUDIT LOG -->
+      <section class="page" data-page="audit">
+        <div class="page-title"><div><h1>AUDIT LOG</h1><p>ADMINISTRATIVE ACTION HISTORY</p></div><div class="actions"><span class="badge admin">ADMIN VIEW</span></div></div>
+        <div class="card"><div class="filter-row"><select class="select" style="max-width:200px"><option>ALL ADMINS</option><option>NIWA / CEO</option><option>SUZUKI / GM</option></select><select class="select" style="max-width:220px"><option>ALL ACTIONS</option><option>PIN RESET</option><option>ROLE CHANGED</option><option>RECORD EDITED</option><option>PAYMENT CREATED</option></select><input class="input" style="max-width:280px" placeholder="対象・IDを検索..."></div></div>
+        <div style="margin-top:14px"><div class="log-card"><div class="log-top"><b>19:52 / EMPLOYEE ROLE CHANGED</b><span class="badge">NIWA / CEO</span></div><div class="log-grid"><div><span>TARGET</span><strong>田中 太郎</strong></div><div><span>BEFORE</span><strong>STAFF</strong></div><div><span>AFTER</span><strong>DIRECTOR</strong></div><div><span>DATE</span><strong>2026/10/02</strong></div></div></div><div class="log-card"><div class="log-top"><b>19:45 / PIN RESET</b><span class="badge">NIWA / CEO</span></div><div class="log-grid"><div><span>TARGET</span><strong>佐藤 次郎</strong></div><div><span>OLD PIN</span><strong>NOT STORED</strong></div><div><span>NEW PIN</span><strong>NOT STORED</strong></div><div><span>SECURITY</span><strong>HASHED</strong></div></div></div><div class="log-card"><div class="log-top"><b>19:32 / SALES RECORD EDITED</b><span class="badge">NIWA / CEO</span></div><div class="log-grid"><div><span>RECORD</span><strong>#0052</strong></div><div><span>QUANTITY</span><strong>1,000 → 1,500</strong></div><div><span>GROSS SALES</span><strong>¥500M → ¥750M</strong></div><div><span>ADJUSTMENT</span><strong>+¥5M UNPAID</strong></div></div></div></div>
+      </section>
+
+      <!-- 13 SETTINGS -->
+      <section class="page" data-page="settings">
+        <div class="page-title"><div><h1>SETTINGS</h1><p>SYSTEM / COMPANY CONFIGURATION</p></div><div class="actions"><span class="badge admin">CEO / COO / GENERAL MANAGER</span></div></div>
+        <div class="setting-block"><h3>01 / MATERIAL PRICES</h3><div class="table-wrap"><table class="table"><thead><tr><th>MATERIAL</th><th>CURRENT PRICE</th><th>EDIT</th></tr></thead><tbody id="settingMaterials"></tbody></table></div></div>
+        <div class="setting-block"><h3>02 / ECSTASY MARKET</h3><div class="price-options market-options" style="max-width:620px"><button class="price">¥300,000</button><button class="price active">¥400,000</button><button class="price">¥500,000</button></div></div>
+        <div class="setting-block"><h3>03 / REVENUE ALLOCATION</h3><div class="alloc"><div class="item"><b>FARMING</b><div class="hero-number" style="font-size:22px;margin-top:9px">40%</div></div><div class="item"><b>PRODUCTION</b><div class="hero-number" style="font-size:22px;margin-top:9px">15%</div></div><div class="item"><b>SALES</b><div class="hero-number" style="font-size:22px;margin-top:9px">25%</div></div><div class="item"><b>CASH</b><div class="hero-number" style="font-size:22px;margin-top:9px">10%</div></div><div class="item"><b>ECSTASY</b><div class="hero-number" style="font-size:22px;margin-top:9px">10%</div></div></div></div>
+        <div class="setting-block"><h3>04 / ROLES & PERMISSIONS</h3><div class="permission-grid"><div class="head">PERMISSION</div><div class="head">ADMIN</div><div class="head">EMPLOYEE</div><div>Register FARMING / PRODUCTION / SALES</div><div class="check">✓</div><div class="no">—</div><div>Process Payroll</div><div class="check">✓</div><div class="no">—</div><div>Edit Employees / PIN Reset</div><div class="check">✓</div><div class="no">—</div><div>View Own Salary</div><div class="check">✓</div><div class="check">✓</div><div>View Other Performance</div><div class="check">✓</div><div class="check">✓</div><div>View Other Salary</div><div class="check">✓</div><div class="no">—</div></div></div>
+        <div class="setting-block"><h3>05 / SECURITY</h3><div class="form-grid three"><div class="form-card"><h4>LOGIN METHOD</h4><b>NAME + 4 DIGIT PIN</b></div><div class="form-card"><h4>FAILED LOGIN LIMIT</h4><b>5 ATTEMPTS</b></div><div class="form-card"><h4>PIN DISPLAY</h4><b>NEVER SHOW</b></div><div class="form-card"><h4>RETIRED LOGIN</h4><b>DISABLED</b></div><div class="form-card"><h4>ADMIN PIN RESET</h4><b>ENABLED</b></div><div class="form-card"><h4>AUDIT LOG</h4><b>ENABLED</b></div></div></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="mobile-bottom"><button data-goto="dashboard" class="active">HOME</button><button data-goto="farming">FARM</button><button data-goto="sales">SALES</button><button data-goto="payroll">PAYROLL</button></div>
+</section>
+<div id="toast" class="toast"><b>PROTOTYPE</b> <span></span></div>
+
+<script>
+const money=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+const navItems=[
+  ['dashboard','02','DASHBOARD','ダッシュボード'],['farming','03','FARMING','素材管理'],['production','04','PRODUCTION','生産管理'],['sales','05','SALES','販売管理'],['payroll','06','PAYROLL','給与管理'],['employees','07','EMPLOYEES','従業員管理'],['performance','08','PERFORMANCE','実績分析'],['inventory','09','INVENTORY','在庫管理'],['cash','10','COMPANY CASH','会社現金'],['activity','11','ACTIVITY LOG','業務履歴'],['audit','12','AUDIT LOG','監査ログ'],['settings','13','SETTINGS','設定']
+];
+const pageSubs={dashboard:'会社概要 / 管理コンソール',farming:'素材納品 / 個人別数量',production:'製造登録 / 給与15%',sales:'販売登録 / 給与25%',payroll:'給与 / 支給管理',employees:'従業員 / アクセス管理',performance:'個人実績 / 分析',inventory:'会社保有在庫 / 資産管理',cash:'現金 / 入出金管理',activity:'業務記録 / 修正',audit:'管理操作 / 監査履歴',settings:'システム / 会社設定'};
+const nav=document.getElementById('nav');
+nav.innerHTML=navItems.map((n,i)=>`<button data-goto="${n[0]}" class="${i===0?'active':''}"><span class="nav-icon">${n[1]}</span><span class="nav-meta">${n[2]}<small>${n[3]}</small></span></button>`).join('');
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===page));
+  document.querySelectorAll('[data-goto]').forEach(b=>b.classList.toggle('active',b.dataset.goto===page));
+  const item=navItems.find(n=>n[0]===page); document.getElementById('crumbTitle').textContent=item?item[2]:page.toUpperCase(); document.getElementById('crumbSub').textContent=pageSubs[page]||'';
+  document.getElementById('sidebar').classList.remove('open'); window.scrollTo({top:0,behavior:'smooth'});
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto]'); if(b) go(b.dataset.goto)});
+
+// login
+const pins=[...document.querySelectorAll('.pin')];pins.forEach((p,i)=>p.addEventListener('input',()=>{p.value=p.value.replace(/\D/g,'').slice(0,1);if(p.value&&pins[i+1])pins[i+1].focus()}));
+document.getElementById('loginBtn').onclick=()=>{const code=pins.map(p=>p.value).join(''); if(code!=='1234'){showToast('デモPINは 1234 です');return} document.getElementById('loginScreen').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');document.getElementById('sideUserName').textContent=document.getElementById('loginName').value||'NIWA SHOTA';};
+document.getElementById('logoutBtn').onclick=()=>{document.getElementById('appShell').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden')};
+document.getElementById('prototypeBtn').onclick=()=>showToast('Ver.2 UI Prototype / Backend未接続');
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+function showToast(msg){const t=document.getElementById('toast');t.querySelector('span').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+// generic segments/chips
+for(const seg of document.querySelectorAll('.seg')) seg.addEventListener('click',e=>{if(e.target.tagName==='BUTTON'){[...seg.children].forEach(b=>b.classList.remove('active'));e.target.classList.add('active')}});
+for(const pr of document.querySelectorAll('.price-options')) pr.addEventListener('click',e=>{if(e.target.classList.contains('price')){[...pr.querySelectorAll('.price')].forEach(b=>b.classList.remove('active'));e.target.classList.add('active'); if(pr.classList.contains('market-options')) updateMarket(parseInt(e.target.textContent.replace(/\D/g,'')))}});
+
+// common data
+const materials=[['GREEN GELATO CANNABIS',35000],['CODEIN',10000],['LIQUID SULFUR',20000],['AMMONIUM NITRATE',15000],['SODIUM HYDROXIDE',12500],['HYDROGEN',25000]];
+function renderFarmTable(id,qtys){const tb=document.querySelector('#'+id+' tbody');tb.innerHTML=materials.map((m,i)=>`<tr><td><b>${m[0]}</b></td><td>${money(m[1])}</td><td><input class="farmQty" data-table="${id}" data-index="${i}" type="number" min="0" value="${qtys[i]||0}"></td><td class="amount farmPay">${money((qtys[i]||0)*m[1])}</td></tr>`).join('')}
+renderFarmTable('farmingTable',[20,10,0,0,0,30]); renderFarmTable('farmingTable2',[0,0,0,0,0,70]);
+function recalcFarm(){let units=0,total=0;document.querySelectorAll('.farmQty').forEach(inp=>{const i=+inp.dataset.index,q=Math.max(0,+inp.value||0),v=q*materials[i][1];units+=q;total+=v;inp.closest('tr').querySelector('.farmPay').textContent=money(v)});document.getElementById('farmUnits').textContent=units.toLocaleString('ja-JP');document.getElementById('farmPayroll').textContent=money(total)}
+document.addEventListener('input',e=>{if(e.target.classList.contains('farmQty'))recalcFarm()});
+document.getElementById('addFarmingEmployee').onclick=()=>showToast('UIモック：ACTIVE従業員選択モーダルを開く想定');
+document.getElementById('registerFarm').onclick=()=>showToast('FARMING RECORDを登録する想定（DB未接続）');
+
+const people=['田中 太郎 / STAFF','佐藤 次郎 / DIRECTOR','鈴木 一郎 / GM','山田 太郎 / LOOKIE','高橋 次郎 / STAFF'];
+function renderParticipants(id,pay){document.getElementById(id).innerHTML=people.map((p,i)=>`<div class="employee-pill"><div class="who"><span class="avatar">${String(i+1).padStart(2,'0')}</span><div><b>${p.split(' / ')[0]}</b><small>${p.split(' / ')[1]}</small></div></div><div class="pill-pay">${money(pay)}</div></div>`).join('')}
+let prodPrice=500000,salesPriceVal=500000,marketPrice=400000,invUnits=600,invSalePriceVal=400000;
+function selectedPrice(container){const t=document.querySelector(container+' .price.active');return parseInt(t.textContent.replace(/\D/g,''))}
+function recalcProd(){prodPrice=selectedPrice('#prodPrice');let q=Math.min(10000,Math.max(500,+document.getElementById('prodQty').value||500));q=Math.round(q/500)*500;document.getElementById('prodQty').value=q;const rev=prodPrice*q,pay=rev*.15,per=pay/5;['prodRevenue','prodSummaryRevenue'].forEach(id=>document.getElementById(id).textContent=money(rev));['prodPayroll','prodSummaryPayroll'].forEach(id=>document.getElementById(id).textContent=money(pay));document.getElementById('prodSummaryQty').textContent=q.toLocaleString('ja-JP');document.getElementById('prodPer').textContent=money(per);renderParticipants('prodParticipants',per)}
+function recalcSales(){salesPriceVal=selectedPrice('#salesPrice');let q=Math.min(10000,Math.max(500,+document.getElementById('salesQty').value||500));q=Math.round(q/500)*500;document.getElementById('salesQty').value=q;const gross=salesPriceVal*q;document.getElementById('grossSales').textContent=money(gross);const alloc=[['FARMING',.4],['PRODUCTION',.15],['SALES',.25],['CASH',.1],['ECSTASY',.1]];document.querySelector('#salesAlloc tbody').innerHTML=alloc.map(a=>`<tr><td><b>${a[0]}</b></td><td>${Math.round(a[1]*100)}%</td><td class="amount">${money(gross*a[1])}</td></tr>`).join('');const payroll=gross*.25,per=payroll/5;document.getElementById('salesPayroll').textContent=money(payroll);document.getElementById('salesPer').textContent=money(per);document.getElementById('salesCash').textContent='+ '+money(gross*.1);document.getElementById('salesReserve').textContent='+ '+((gross*.1)/salesPriceVal).toLocaleString('ja-JP')+' units';renderParticipants('salesParticipants',per)}
+document.querySelector('#prodPrice').addEventListener('click',()=>setTimeout(recalcProd));document.querySelector('#salesPrice').addEventListener('click',()=>setTimeout(recalcSales));
+document.getElementById('prodQty').addEventListener('input',recalcProd);document.getElementById('salesQty').addEventListener('input',recalcSales);
+document.addEventListener('click',e=>{const b=e.target.closest('[data-qty]');if(!b)return;const kind=b.dataset.qty,dir=+b.dataset.dir;if(kind==='prod'){const i=document.getElementById('prodQty');i.value=(+i.value||1000)+dir*500;recalcProd()}if(kind==='sales'){const i=document.getElementById('salesQty');i.value=(+i.value||1000)+dir*500;recalcSales()}if(kind==='inventory'){const i=document.getElementById('invSellQty');i.value=Math.min(invUnits,Math.max(50,(+i.value||100)+dir*50));recalcInventorySale()}});
+document.getElementById('registerProduction').onclick=()=>showToast('PRODUCTION RECORDを登録する想定（DB未接続）');document.getElementById('registerSales').onclick=()=>showToast('SALES RECORDを登録する想定（DB未接続）');
+recalcProd();recalcSales();
+
+// payroll
+const payroll=[['田中 太郎','SALES','2026/10/02',25000000],['田中 太郎','FARMING','2026/10/02',500000],['佐藤 次郎','PRODUCTION','2026/10/02',15000000],['鈴木 花子','FARMING','2026/10/01',3000000],['高橋 健','PRODUCTION','2026/09/30',12000000],['渡辺 結衣','SALES','2026/09/29',6000000],['渡辺 結衣','FARMING','2026/09/29',2500000]];
+document.getElementById('payrollRows').innerHTML=payroll.map((r,i)=>`<tr><td><input class="payCheck" type="checkbox" data-amount="${r[3]}"></td><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td class="amount ${r[1]==='SALES'?'money-negative':''}">${money(r[3])}</td><td><span class="badge yellow">UNPAID</span></td></tr>`).join('');
+function calcPaySelect(){const c=[...document.querySelectorAll('.payCheck:checked')],t=c.reduce((s,x)=>s+(+x.dataset.amount),0);document.getElementById('paySelectedCount').textContent=c.length+' RECORDS';document.getElementById('paySelectedTotal').textContent=money(t)}document.addEventListener('change',e=>{if(e.target.classList.contains('payCheck'))calcPaySelect();if(e.target.id==='payAll'){document.querySelectorAll('.payCheck').forEach(x=>x.checked=e.target.checked);calcPaySelect()}});document.getElementById('processPayment').onclick=()=>{const n=document.querySelectorAll('.payCheck:checked').length;showToast(n?`${n}件の給与支給確認を開く想定`:'支給する明細を選択してください')};
+
+// employees
+const employees=[['田中 太郎','STAFF','FARMING / SALES','2026/04/01','ACTIVE'],['佐藤 次郎','DIRECTOR','SALES','2026/05/12','ACTIVE'],['鈴木 一郎','GENERAL MANAGER','PRODUCTION / SALES','2026/03/08','ACTIVE'],['山田 太郎','LOOKIE','FARMING','2026/09/14','ACTIVE'],['小林 花子','STAFF','PRODUCTION','2026/06/21','ACTIVE'],['伊藤 蓮','STAFF','FARMING','2026/01/13','RETIRED']];document.getElementById('employeeRows').innerHTML=employees.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="badge ${r[4]==='ACTIVE'?'active':'red'}">${r[4]}</span></td></tr>`).join('');document.getElementById('addEmployeeBtn').onclick=()=>showToast('ADD EMPLOYEEモーダルを開く想定');
+
+// market / inventory
+function updateMarket(v){marketPrice=v;document.querySelectorAll('.market-options').forEach(g=>g.querySelectorAll('.price').forEach(b=>b.classList.toggle('active',parseInt(b.textContent.replace(/\D/g,''))===v)));const cur=invUnits*marketPrice,acq=210000000,pl=cur-acq;document.getElementById('dashMarketValue').textContent=money(v)+' / pcs';document.getElementById('invCurrent').textContent=money(cur);document.getElementById('invPL').textContent=(pl>=0?'+ ':'- ')+money(Math.abs(pl));document.getElementById('invPL').className='value '+(pl>=0?'money-positive':'money-negative');document.getElementById('invValueShort').textContent='¥'+(cur/1000000).toFixed(0)+'M';document.getElementById('totalAssetShort').textContent='¥'+((180000000+cur)/1000000).toFixed(0)+'M'}
+function recalcInventorySale(){invSalePriceVal=selectedPrice('#invSalePrice');let q=Math.min(invUnits,Math.max(50,+document.getElementById('invSellQty').value||50));document.getElementById('invSellQty').value=q;document.getElementById('invProceeds').textContent=money(q*invSalePriceVal)}document.querySelector('#invSalePrice').addEventListener('click',()=>setTimeout(recalcInventorySale));document.getElementById('invSellQty').addEventListener('input',recalcInventorySale);document.getElementById('sellInventory').onclick=()=>showToast('会社在庫売却の確認画面を開く想定');updateMarket(400000);recalcInventorySale();
+
+// cash
+ document.getElementById('registerCash').onclick=()=>showToast('CASH取引を登録する想定（監査ログ連動）');
+
+// activity
+const acts=[{id:'#0052',type:'SALES',time:'2026/10/02 19:42',prod:'ECSTASY',qty:'1,000 units',value:'¥500,000,000',pay:'¥125,000,000',status:'VALID'},{id:'#0051',type:'PRODUCTION',time:'2026/10/02 19:31',prod:'ECSTASY',qty:'1,000 units',value:'¥500,000,000',pay:'¥75,000,000',status:'VALID'},{id:'#0049',type:'FARMING',time:'2026/10/02 18:55',prod:'HYDROGEN / CODEIN',qty:'130 units',value:'¥3,300,000',pay:'¥3,300,000',status:'VALID'}];document.getElementById('activityLogs').innerHTML=acts.map(a=>`<div class="log-card"><div class="log-top"><b>${a.id} / ${a.type}</b><span class="badge active">${a.status}</span></div><div class="log-grid"><div><span>DATE</span><strong>${a.time}</strong></div><div><span>PRODUCT</span><strong>${a.prod}</strong></div><div><span>QUANTITY</span><strong>${a.qty}</strong></div><div><span>VALUE</span><strong>${a.value}</strong></div></div><div class="log-grid" style="margin-top:8px"><div><span>PAYROLL</span><strong>${a.pay}</strong></div><div><span>PARTICIPANTS</span><strong>5 PEOPLE</strong></div><div><span>PAY STATUS</span><strong>UNPAID</strong></div><div><span>LINKED IMPACT</span><strong>PAYROLL / ASSET</strong></div></div><div class="log-actions"><button class="btn ghost smallbtn">DETAILS</button><button class="btn ghost smallbtn">EDIT</button><button class="btn danger smallbtn">VOID</button></div></div>`).join('');
+
+// settings materials
+ document.getElementById('settingMaterials').innerHTML=materials.map(m=>`<tr><td><b>${m[0]}</b></td><td class="amount">${money(m[1])}</td><td><button class="btn ghost smallbtn" onclick="showToast('単価編集モーダルを開く想定')">EDIT</button></td></tr>`).join('');
+</script>
+</body>
+</html>
