@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COMPANY SYSTEM</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080c11;color:#e8edf3;font-family:Arial,"Noto Sans JP",sans-serif}
+header{padding:20px 24px;border-bottom:1px solid #27313c;background:#10161d;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;letter-spacing:2px}.status{font-size:12px;color:#8ea0b3}
+nav{display:flex;gap:8px;padding:14px 24px;background:#0e141b;border-bottom:1px solid #27313c;overflow:auto}
+nav button{background:#171f28;color:#b9c5d1;border:1px solid #2a3643;padding:11px 18px;border-radius:8px;white-space:nowrap;cursor:pointer}
+nav button.active{background:#e8edf3;color:#0b0f14}
+main{max-width:1100px;margin:auto;padding:24px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.card{background:#111820;border:1px solid #26303b;border-radius:12px;padding:18px}.label{font-size:12px;color:#8291a1}.value{font-size:25px;font-weight:800;margin-top:8px}
+.panel{background:#111820;border:1px solid #26303b;border-radius:12px;padding:20px;margin-bottom:18px}
+h2{font-size:18px;margin:0 0 18px}.sub{color:#91a0af;font-size:13px;margin:-8px 0 16px}
+label{display:block;font-size:12px;color:#91a0af;margin:12px 0 6px}
+input,select{width:100%;padding:12px;background:#0b1016;border:1px solid #344150;color:#fff;border-radius:8px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.btn{width:100%;padding:13px;border:0;border-radius:8px;background:#e8edf3;color:#0b0f14;font-weight:800;margin-top:16px;cursor:pointer}
+.result{font-size:31px;font-weight:900;text-align:center;padding:20px;background:#0b1016;border-radius:10px;margin-top:16px}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.mini{background:#0b1016;border-radius:9px;padding:13px}.mini span{display:block;color:#8291a1;font-size:11px}.mini b{display:block;margin-top:5px;font-size:18px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 8px;border-bottom:1px solid #26303b;text-align:left}th{color:#8291a1;font-weight:500}
+.empty{color:#718092;text-align:center;padding:25px}
+.note{font-size:12px;color:#718092;margin-top:10px;line-height:1.6}
+@media(max-width:700px){main{padding:14px}.cards{grid-template-columns:1fr}.grid,.breakdown{grid-template-columns:1fr}header{padding:16px}.value{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="logo">COMPANY SYSTEM</div><div class="status">PAYROLL / ONLINE</div></header>
+
+<nav>
+<button class="active" data-page="dashboard">DASHBOARD</button>
+<button data-page="material">素材集め</button>
+<button data-page="production">製造</button>
+<button data-page="sales">販売</button>
+<button data-page="history">支給履歴</button>
+</nav>
+
+<main>
+<section id="dashboard">
+<div class="cards">
+<div class="card"><div class="label">総売上</div><div class="value" id="dashSales">¥0</div></div>
+<div class="card"><div class="label">総人件費</div><div class="value" id="dashPayroll">¥0</div></div>
+<div class="card"><div class="label">支給件数</div><div class="value" id="dashCount">0件</div></div>
+</div>
+<div class="panel">
+<h2>給与計算システム</h2>
+<p class="sub">素材集め・製造・販売の作業量を入力すると、部門ルールに応じて給与を自動計算します。</p>
+<div class="breakdown">
+<div class="mini"><span>素材集め</span><b>素材価格 × 個数</b></div>
+<div class="mini"><span>製造</span><b>売上 × 15%</b></div>
+<div class="mini"><span>販売</span><b>売上 × 25%</b></div>
+</div>
+</div>
+</section>
+
+<section id="material" style="display:none">
+<div class="panel">
+<h2>素材集め</h2>
+<p class="sub">素材価格の100%を、集めた個数に応じて支給します。</p>
+<div class="grid">
+<div><label>作業者</label><input id="mWorker" placeholder="例：田中"></div>
+<div><label>素材</label><select id="materialItem"></select></div>
+</div>
+<label>数量</label><input id="mQty" type="number" min="1" value="1" oninput="calcMaterial()">
+<div class="result" id="mResult">¥0</div>
+<div class="note">素材価格100%を給与として支給</div>
+<button class="btn" onclick="registerMaterial()">支給登録する</button>
+</div>
+</section>
+
+<section id="production" style="display:none">
+<div class="panel">
+<h2>製造</h2>
+<p class="sub">エクスタシーの価格・製造数量・参加人数から給与を自動計算します。</p>
+<label>作業者（代表者名）</label><input id="pWorker" placeholder="例：田中">
+<div class="grid">
+<div><label>エクスタシー 1個の価格</label><select id="pPrice" onchange="calcProduction()"><option value="300000">¥300,000</option><option value="400000">¥400,000</option><option value="500000">¥500,000</option></select></div>
+<div><label>製造数量</label><select id="pQty" onchange="calcProduction()"></select></div>
+</div>
+<label>参加人数</label><select id="pPeople" onchange="calcProduction()"></select>
+<div class="breakdown">
+<div class="mini"><span>総売上相当額</span><b id="pRevenue">¥0</b></div>
+<div class="mini"><span>製造給与総額（15%）</span><b id="pPool">¥0</b></div>
+<div class="mini"><span>1人あたり</span><b id="pPer">¥0</b></div>
+</div>
+<button class="btn" onclick="registerProduction()">製造給与を支給登録</button>
+</div>
+</section>
+
+<section id="sales" style="display:none">
+<div class="panel">
+<h2>販売</h2>
+<p class="sub">エクスタシーの販売価格・販売数量・参加人数から給与を自動計算します。</p>
+<label>作業者（代表者名）</label><input id="sWorker" placeholder="例：田中">
+<div class="grid">
+<div><label>エクスタシー 1個の価格</label><select id="sPrice" onchange="calcSales()"><option value="300000">¥300,000</option><option value="400000">¥400,000</option><option value="500000">¥500,000</option></select></div>
+<div><label>販売数量</label><select id="sQty" onchange="calcSales()"></select></div>
+</div>
+<label>参加人数</label><select id="sPeople" onchange="calcSales()"></select>
+<div class="breakdown">
+<div class="mini"><span>総売上</span><b id="sRevenue">¥0</b></div>
+<div class="mini"><span>販売給与総額（25%）</span><b id="sPool">¥0</b></div>
+<div class="mini"><span>1人あたり</span><b id="sPer">¥0</b></div>
+</div>
+<button class="btn" onclick="registerSales()">販売給与を支給登録</button>
+</div>
+</section>
+
+<section id="history" style="display:none">
+<div class="panel"><h2>支給履歴</h2><div id="table"></div></div>
+</section>
+</main>
+
+<script>
+const materials={
+"GREEN GELATO CANNABIS":35000,
+"CODEIN":10000,
+"LIQUID SULFUR":20000,
+"AMMONIUM NITRATE":15000,
+"SODIUM HYDROXIDE":12500,
+"HYDROGEN":25000
+};
+let history=JSON.parse(localStorage.getItem("companyPayrollV2")||"[]");
+
+const money=n=>"¥"+Math.round(n).toLocaleString();
+
+function fillSelects(){
+ const mi=document.getElementById("materialItem");
+ mi.innerHTML=Object.entries(materials).map(([k,v])=>`<option value="${v}">${k} — ${money(v)}</option>`).join("");
+ for(const id of ["pQty","sQty"]){
+   document.getElementById(id).innerHTML="";
+   for(let n=500;n<=10000;n+=500) document.getElementById(id).insertAdjacentHTML("beforeend",`<option value="${n}">${n.toLocaleString()}個</option>`);
+ }
+ for(const id of ["pPeople","sPeople"]){
+   document.getElementById(id).innerHTML="";
+   for(let n=1;n<=100;n++) document.getElementById(id).insertAdjacentHTML("beforeend",`<option value="${n}">${n}人</option>`);
+ }
+}
+
+function calcMaterial(){
+ const price=Number(document.getElementById("materialItem").value)||0;
+ const qty=Number(document.getElementById("mQty").value)||0;
+ document.getElementById("mResult").textContent=money(price*qty);
+}
+document.getElementById("materialItem").addEventListener("change",calcMaterial);
+
+function productionData(){
+ const price=Number(document.getElementById("pPrice").value),qty=Number(document.getElementById("pQty").value),people=Number(document.getElementById("pPeople").value);
+ const revenue=price*qty,pool=revenue*.15,per=pool/people;
+ return {price,qty,people,revenue,pool,per};
+}
+function calcProduction(){
+ const x=productionData();
+ document.getElementById("pRevenue").textContent=money(x.revenue);
+ document.getElementById("pPool").textContent=money(x.pool);
+ document.getElementById("pPer").textContent=money(x.per);
+}
+function salesData(){
+ const price=Number(document.getElementById("sPrice").value),qty=Number(document.getElementById("sQty").value),people=Number(document.getElementById("sPeople").value);
+ const revenue=price*qty,pool=revenue*.25,per=pool/people;
+ return {price,qty,people,revenue,pool,per};
+}
+function calcSales(){
+ const x=salesData();
+ document.getElementById("sRevenue").textContent=money(x.revenue);
+ document.getElementById("sPool").textContent=money(x.pool);
+ document.getElementById("sPer").textContent=money(x.per);
+}
+
+function save(x){
+ history.unshift(x);localStorage.setItem("companyPayrollV2",JSON.stringify(history));render();
+}
+function registerMaterial(){
+ const worker=document.getElementById("mWorker").value.trim(),item=document.getElementById("materialItem").selectedOptions[0].text.split(" — ")[0],qty=Number(document.getElementById("mQty").value),pay=Number(document.getElementById("materialItem").value)*qty;
+ if(!worker||qty<=0){alert("作業者名と数量を入力してください");return}
+ save({date:new Date().toLocaleString("ja-JP"),dept:"素材集め",worker,item,qty,people:1,revenue:pay,pool:pay,per:pay,pay});
+ alert("素材集め給与 "+money(pay)+" を登録しました");
+ document.getElementById("mWorker").value="";document.getElementById("mQty").value=1;calcMaterial();
+}
+function registerProduction(){
+ const worker=document.getElementById("pWorker").value.trim(),x=productionData();
+ if(!worker){alert("代表者名を入力してください");return}
+ save({date:new Date().toLocaleString("ja-JP"),dept:"製造",worker,item:"ECSTASY",qty:x.qty,people:x.people,revenue:x.revenue,pool:x.pool,per:x.per,pay:x.pool});
+ alert("製造給与総額 "+money(x.pool)+" を登録しました（"+x.people+"人で等分）");
+}
+function registerSales(){
+ const worker=document.getElementById("sWorker").value.trim(),x=salesData();
+ if(!worker){alert("代表者名を入力してください");return}
+ save({date:new Date().toLocaleString("ja-JP"),dept:"販売",worker,item:"ECSTASY",qty:x.qty,people:x.people,revenue:x.revenue,pool:x.pool,per:x.per,pay:x.pool});
+ alert("販売給与総額 "+money(x.pool)+" を登録しました（"+x.people+"人で等分）");
+}
+function render(){
+ const sales=history.reduce((a,x)=>a+(x.dept==="販売"?x.revenue:0),0);
+ const payroll=history.reduce((a,x)=>a+x.pool,0);
+ document.getElementById("dashSales").textContent=money(sales);
+ document.getElementById("dashPayroll").textContent=money(payroll);
+ document.getElementById("dashCount").textContent=history.length+"件";
+ const t=document.getElementById("table");
+ if(!history.length){t.innerHTML='<div class="empty">まだ支給履歴がありません。</div>';return}
+ t.innerHTML='<table><tr><th>日時</th><th>部門</th><th>代表者</th><th>内容</th><th>数量</th><th>人数</th><th>給与総額</th><th>1人あたり</th></tr>'+
+ history.map(x=>`<tr><td>${x.date}</td><td>${x.dept}</td><td>${x.worker}</td><td>${x.item}</td><td>${x.qty.toLocaleString()}</td><td>${x.people}</td><td>${money(x.pool)}</td><td>${money(x.per)}</td></tr>`).join("")+'</table>';
+}
+function show(id,btn){
+ const pages=["dashboard","material","production","sales","history"];
+ pages.forEach(x=>{
+   const el=document.getElementById(x);
+   if(el) el.style.display=(x===id)?"block":"none";
+ });
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ if(btn) btn.classList.add("active");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelector("nav").addEventListener("click",function(e){
+ const btn=e.target.closest("button[data-page]");
+ if(!btn) return;
+ e.preventDefault();
+ show(btn.dataset.page,btn);
+});
+
+fillSelects();calcMaterial();calcProduction();calcSales();render();
+</script>
+</body>
+</html>
